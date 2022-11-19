@@ -1,27 +1,23 @@
 import { Router } from "express";
-import multer from "multer";
 
-import { createCategoryController } from "../modules/cars/useCases/createCategory";
-import { importCategoriesController } from "../modules/cars/useCases/ImportCategories";
-import { ImportCategoriesController } from "../modules/cars/useCases/ImportCategories/ImportCategoriesController";
-import { listCategoriesController } from "../modules/cars/useCases/listCategories";
+import { CategoriesRepository } from "../cars/repositories/CategoriesRepository";
+import { CreateCategoryService } from "../cars/services/CreateCategoryService";
 
 const categoriesRoutes = Router();
+const categoriesRepository = new CategoriesRepository();
 
-const upload = multer({
-  dest: "./tmp",
+/* Routes are responsible for getting the data from the user and passing forward or throwing errors. */
+
+categoriesRoutes.post("/", (req, res) => {
+  const { name, description } = req.body;
+
+  const createCategoryService = new CreateCategoryService(categoriesRepository);
+  createCategoryService.execute({ name, description });
+  res.status(201).send();
 });
 
-categoriesRoutes.post("/", (request, response) => {
-  return createCategoryController.handle(request, response);
-});
-
-categoriesRoutes.get("/", (request, response) => {
-  return listCategoriesController.handle(request, response);
-});
-
-categoriesRoutes.post("/import", upload.single("file"), (request, response) => {
-  return importCategoriesController.handle(request, response);
+categoriesRoutes.get("", (req, res) => {
+  res.status(200).send(categoriesRepository.list());
 });
 
 export { categoriesRoutes };

@@ -1,23 +1,18 @@
 import { Router } from "express";
 
-import { CategoriesRepository } from "../cars/repositories/CategoriesRepository";
-import { CreateCategoryService } from "../cars/services/CreateCategoryService";
+import { createCategoryController } from "../cars/useCases/createCategory";
+import { listCategoriesController } from "../cars/useCases/listCategories";
 
 const categoriesRoutes = Router();
-const categoriesRepository = new CategoriesRepository();
 
 /* Routes are responsible for getting the data from the user and passing forward or throwing errors. */
 
 categoriesRoutes.post("/", (req, res) => {
-  const { name, description } = req.body;
-
-  const createCategoryService = new CreateCategoryService(categoriesRepository);
-  createCategoryService.execute({ name, description });
-  res.status(201).send();
+  return createCategoryController.handle(req, res);
 });
 
-categoriesRoutes.get("", (req, res) => {
-  res.status(200).send(categoriesRepository.list());
+categoriesRoutes.get("/", (req, res) => {
+  return listCategoriesController.handle(req, res);
 });
 
 export { categoriesRoutes };

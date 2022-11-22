@@ -1,8 +1,8 @@
-import { Category } from "../model/Category";
+import { Category } from "../../model/Category";
 import {
   ICategoriesRepository,
   ICreateCategoryDTO,
-} from "./ICategoriesRepository";
+} from "../ICategoriesRepository";
 
 export class CategoriesRepository implements ICategoriesRepository {
   /*
@@ -13,7 +13,17 @@ export class CategoriesRepository implements ICategoriesRepository {
   */
   private categories: Category[]; // In-memory categories array
 
-  constructor() {
+  private static INSTANCE: CategoriesRepository;
+
+  public static getInstance(): CategoriesRepository {
+    if (!CategoriesRepository.INSTANCE) {
+      CategoriesRepository.INSTANCE = new CategoriesRepository();
+    }
+
+    return CategoriesRepository.INSTANCE;
+  }
+
+  private constructor() {
     this.categories = [];
   }
 

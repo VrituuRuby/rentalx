@@ -1,18 +1,27 @@
 import { Router } from "express";
+import multer from "multer";
 
-import { createCategoryController } from "../cars/useCases/createCategory";
-import { listCategoriesController } from "../cars/useCases/listCategories";
+import { CreateCategoryController } from "../modules/cars/useCases/createCategory/CreateCategoryController";
+import { ImportCategoriesController } from "../modules/cars/useCases/importCategories/ImportCategoriesController";
+import { ListCategoriesController } from "../modules/cars/useCases/listCategories/ListCategoriesController";
+
+const upload = multer({ dest: "./tmp" });
 
 const categoriesRoutes = Router();
 
-/* Routes are responsible for getting the data from the user and passing forward or throwing errors. */
+// CONTROLLERS
+const createCategoryController = new CreateCategoryController();
+const importCategoriesController = new ImportCategoriesController();
+const listCategoriesContoller = new ListCategoriesController();
 
-categoriesRoutes.post("/", (req, res) => {
-  return createCategoryController.handle(req, res);
-});
+categoriesRoutes.post("/", createCategoryController.handle);
 
-categoriesRoutes.get("/", (req, res) => {
-  return listCategoriesController.handle(req, res);
-});
+categoriesRoutes.get("/", listCategoriesContoller.handle);
+
+categoriesRoutes.post(
+  "/import",
+  upload.single("file"),
+  importCategoriesController.handle,
+);
 
 export { categoriesRoutes };

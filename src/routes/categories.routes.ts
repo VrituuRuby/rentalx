@@ -12,11 +12,11 @@ const categoriesRoutes = Router();
 // CONTROLLERS
 const createCategoryController = new CreateCategoryController();
 const importCategoriesController = new ImportCategoriesController();
-const listCategoriesContoller = new ListCategoriesController();
+const listCategoriesController = new ListCategoriesController();
 
 categoriesRoutes.post("/", createCategoryController.handle);
 
-categoriesRoutes.get("/", listCategoriesContoller.handle);
+categoriesRoutes.get("/", listCategoriesController.handle);
 
 categoriesRoutes.post(
   "/import",

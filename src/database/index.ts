@@ -7,7 +7,7 @@ export const AppDataSource = new DataSource({
   username: "docker",
   password: "ignite",
   database: "rentalx",
-  entities: ["./src/modules/cars/entities/*.ts"],
+  entities: ["./src/modules/**/entities/*.ts"],
   migrations: ["./src/database/migrations/*.ts"],
 });
 

@@ -20,13 +20,13 @@ interface IResponse {
 @injectable()
 class AuthenticateUserUseCase {
   constructor(
-    @inject("UserRepository")
-    private userRepository: IUsersRepository,
+    @inject("UsersRepository")
+    private usersRepository: IUsersRepository,
   ) {}
 
   async execute({ email, password }: IRequest): Promise<IResponse> {
     // Checks if user exists
-    const user = await this.userRepository.findUserByEmail(email);
+    const user = await this.usersRepository.findUserByEmail(email);
     if (!user) throw new AppError("Incorrect email or password!");
 
     // Checks if password is right
@@ -34,7 +34,7 @@ class AuthenticateUserUseCase {
     if (!passwordMatch) throw new AppError("Incorrect email or password");
 
     // Generate JWT token
-    const token = sign({}, "783c6491e6bd0d0119ded0b8706b915d", {
+    const token = await sign({}, "783c6491e6bd0d0119ded0b8706b915d", {
       subject: user.id,
       expiresIn: "1d",
     });

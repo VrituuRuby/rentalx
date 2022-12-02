@@ -2,6 +2,7 @@ import { parse as csvParse } from "csv-parse";
 import fs from "fs";
 import { inject, injectable } from "tsyringe";
 
+import { deleteFile } from "../../../../utils/file";
 import { ICategoriesRepository } from "../../repositories/ICategoriesRepository";
 
 interface IImportCategory {
@@ -28,7 +29,10 @@ class ImportCategoriesUseCase {
           const [name, description] = line;
           categories.push({ name, description });
         })
-        .on("end", () => resolve(categories))
+        .on("end", () => {
+          deleteFile(file.path);
+          resolve(categories);
+        })
         .on("error", err => reject(err));
     });
   }

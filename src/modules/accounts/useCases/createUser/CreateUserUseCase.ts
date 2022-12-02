@@ -8,8 +8,8 @@ import { IUsersRepository } from "../../repositories/IUsersRepository";
 @injectable()
 class CreateUserUseCase {
   constructor(
-    @inject("UserRepository")
-    private userRepository: IUsersRepository,
+    @inject("UsersRepository")
+    private usersRepository: IUsersRepository,
   ) {}
 
   async execute({
@@ -18,12 +18,12 @@ class CreateUserUseCase {
     email,
     password,
   }: ICreateUserDTO): Promise<void> {
-    const userExists = await this.userRepository.findUserByEmail(email);
+    const userExists = await this.usersRepository.findUserByEmail(email);
 
     const passwordHash = await hash(password, 8);
 
     if (userExists) throw new AppError("User already exists");
-    await this.userRepository.create({
+    await this.usersRepository.create({
       name,
       driver_license,
       password: passwordHash,

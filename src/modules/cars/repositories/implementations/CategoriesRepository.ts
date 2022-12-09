@@ -1,7 +1,8 @@
 import { Repository } from "typeorm";
 
+import { Category } from "@modules/cars/entities/Category";
+
 import { AppDataSource } from "../../../../database";
-import { Category } from "../../entities/Category";
 import {
   ICategoriesRepository,
   ICreateCategoryDTO,

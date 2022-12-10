@@ -3,7 +3,7 @@ import {
   ICreateCategoryDTO,
 } from "@modules/cars/repositories/ICategoriesRepository";
 
-import { Category } from "../../entities/Category";
+import { Category } from "../../infra/typeorm/entities/Category";
 
 class CategoriesRepositoryInMemory implements ICategoriesRepository {
   private categories: Category[] = [];

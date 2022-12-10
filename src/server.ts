@@ -3,10 +3,11 @@ import express, { NextFunction, Response, Request } from "express";
 import "express-async-errors";
 
 import "reflect-metadata";
-import "./shared/container";
-import { createConnection } from "./database";
-import { AppError } from "./errors/AppError";
-import { router } from "./routes";
+import "@shared/container";
+import { AppError } from "@shared/errors/AppError";
+import { router } from "@shared/infra/http/routes";
+
+import { createConnection } from "./shared/infra/typeorm";
 
 createConnection();
 

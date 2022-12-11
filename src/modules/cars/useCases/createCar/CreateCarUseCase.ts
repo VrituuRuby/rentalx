@@ -1,5 +1,6 @@
 import { inject, injectable } from "tsyringe";
 
+import { Car } from "@modules/cars/infra/typeorm/entities/Car";
 import { ICarsRepository } from "@modules/cars/repositories/ICarsRepository";
 import { AppError } from "@shared/errors/AppError";
 
@@ -20,16 +21,33 @@ class CreateCarUseCase {
     private carsRepository: ICarsRepository,
   ) {}
 
-  async execute(data: IRequest): Promise<void> {
+  async execute({
+    brand,
+    category_id,
+    daily_rate,
+    description,
+    fine_amount,
+    license_plate,
+    name,
+  }: IRequest): Promise<Car> {
     const carExists = await this.carsRepository.findByLicensePlate(
-      data.license_plate,
+      license_plate,
     );
 
     if (carExists) {
       throw new AppError("Car already exists");
     }
 
-    await this.carsRepository.create(data);
+    const car = await this.carsRepository.create({
+      brand,
+      category_id,
+      daily_rate,
+      description,
+      fine_amount,
+      license_plate,
+      name,
+    });
+    return car;
   }
 }
 

@@ -5,15 +5,15 @@ import { AppError } from "@shared/errors/AppError";
 import { CreateCarUseCase } from "./CreateCarUseCase";
 
 let createCar: CreateCarUseCase;
-let carsRepository: ICarsRepository;
+let carsRepositoryInMemory: ICarsRepository;
 
 describe("Create car", () => {
   beforeEach(() => {
-    carsRepository = new CarsRepositoryInMemory();
-    createCar = new CreateCarUseCase(carsRepository);
+    carsRepositoryInMemory = new CarsRepositoryInMemory();
+    createCar = new CreateCarUseCase(carsRepositoryInMemory);
   });
   it("Should be possible to create a new car", async () => {
-    await createCar.execute({
+    const car = await createCar.execute({
       name: "Car Name",
       brand: "Brand Name",
       category_id: "12903129083921",
@@ -22,6 +22,7 @@ describe("Create car", () => {
       fine_amount: 60,
       license_plate: "ABC-1234",
     });
+    expect(car).toHaveProperty("id");
   });
 
   it("Should not be able to create a new car with an existing license plate", async () => {
@@ -33,11 +34,34 @@ describe("Create car", () => {
         daily_rate: 120,
         description: "Car description",
         fine_amount: 60,
-        license_plate: "ABC-1234",
+        license_plate: "DEF-5678",
       };
 
+      const car2 = {
+        name: "Car2",
+        brand: "Brand2 Name",
+        category_id: "12903129083921",
+        daily_rate: 120,
+        description: "Car2 description",
+        fine_amount: 60,
+        license_plate: "DEF-5678",
+      };
       await createCar.execute(car);
-      await createCar.execute(car);
+      await createCar.execute(car2);
     }).rejects.toBeInstanceOf(AppError);
+  });
+
+  it("Should be able to create a car with available default as true", async () => {
+    const car = await createCar.execute({
+      name: "Car1",
+      brand: "Brand Name",
+      category_id: "12903129083921",
+      daily_rate: 120,
+      description: "Car description",
+      fine_amount: 60,
+      license_plate: "ABCD-1234",
+    });
+
+    await expect(car.available).toBe(true);
   });
 });

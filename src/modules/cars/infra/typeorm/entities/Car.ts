@@ -57,11 +57,12 @@ class Car {
   })
   specifications: Specification[];
 
-  constructor() {
+  constructor(id?: string) {
     if (!this.id) {
       this.id = uuidV4();
-      this.created_at = new Date();
       this.available = true;
+    } else {
+      this.id = id;
     }
   }
 }

@@ -1,7 +1,7 @@
-import { AppError } from "@shared/errors/AppError";
 import { ICreateUserDTO } from "@modules/accounts/dtos/ICreateUserDTO";
 import { UsersRepositoryInMemory } from "@modules/accounts/repositories/in-memory/UsersRepositoryInMemory";
 import { CreateUserUseCase } from "@modules/accounts/useCases/createUser/CreateUserUseCase";
+import { AppError } from "@shared/errors/AppError";
 
 import { AuthenticateUserUseCase } from "./AuthenticateUserUseCase";
 
@@ -15,7 +15,7 @@ describe("Authenticate user", () => {
     authenticateUser = new AuthenticateUserUseCase(usersRepository);
     createUser = new CreateUserUseCase(usersRepository);
   });
-  it("Should be possible to authenticate an user", async () => {
+  it("Must be possible to authenticate an user", async () => {
     const user: ICreateUserDTO = {
       name: "Test User",
       driver_license: "0001234",
@@ -32,7 +32,7 @@ describe("Authenticate user", () => {
     expect(result).toHaveProperty("token");
   });
 
-  it("Should not be possible to authenticate an inexistent user", async () => {
+  it("Must not be possible to authenticate an inexistent user", async () => {
     expect(async () => {
       await authenticateUser.execute({
         email: "anotheremail@test.com",
@@ -41,7 +41,7 @@ describe("Authenticate user", () => {
     }).rejects.toBeInstanceOf(AppError);
   });
 
-  it("Should not be possible to authenticate with incorrect password", async () => {
+  it("Must not be possible to authenticate with incorrect password", async () => {
     const user: ICreateUserDTO = {
       name: "Test User",
       driver_license: "0001234",

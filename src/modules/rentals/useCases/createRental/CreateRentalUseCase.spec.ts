@@ -1,14 +1,14 @@
-import { hash } from "bcryptjs";
+import dayjs from "dayjs";
 
-import { UsersRepositoryInMemory } from "@modules/accounts/repositories/in-memory/UsersRepositoryInMemory";
-import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
-import { ICarsRepository } from "@modules/cars/repositories/ICarsRepository";
-import { CarsRepositoryInMemory } from "@modules/cars/repositories/in-memory/CarsRepositoryInMemory";
 import { RentalsRepositoryInMemory } from "@modules/rentals/infra/typeorm/repositories/in-memory/RentalsRepositoryInMemory";
 import { IRentalsRepository } from "@modules/rentals/repositories/IRentalsRepository";
 import { AppError } from "@shared/errors/AppError";
 
 import { CreateRentalUseCase } from "./CreateRentalUseCase";
+
+function addHours(date: Date, hours: number): Date {
+  return new Date(date.setHours(date.getHours() + hours));
+}
 
 let rentalsRepository: IRentalsRepository;
 let createRentalUseCase: CreateRentalUseCase;
@@ -21,7 +21,7 @@ describe("Create Rental", () => {
     const rental = await createRentalUseCase.execute({
       car_id: "123123",
       user_id: "abcabc",
-      expected_return_date: new Date(2022, 11, 25),
+      expected_return_date: dayjs().add(24, "h").toDate(),
     });
 
     expect(rental).toHaveProperty("id");
@@ -32,13 +32,13 @@ describe("Create Rental", () => {
       await createRentalUseCase.execute({
         car_id: "123123",
         user_id: "abcabc",
-        expected_return_date: new Date(2022, 11, 25),
+        expected_return_date: addHours(new Date(), 24),
       });
 
       await createRentalUseCase.execute({
         car_id: "123123",
         user_id: "abcdef",
-        expected_return_date: new Date(2022, 11, 25),
+        expected_return_date: addHours(new Date(), 24),
       });
     }).rejects.toBeInstanceOf(AppError);
   });
@@ -47,23 +47,23 @@ describe("Create Rental", () => {
       await createRentalUseCase.execute({
         car_id: "123456",
         user_id: "abcabc",
-        expected_return_date: new Date(2022, 11, 25),
+        expected_return_date: addHours(new Date(), 24),
       });
 
       await createRentalUseCase.execute({
         car_id: "456123",
         user_id: "abcabc",
-        expected_return_date: new Date(2022, 11, 25),
+        expected_return_date: addHours(new Date(), 24),
       });
     }).rejects.toBeInstanceOf(AppError);
   });
   it("Should not be able to register a new rental if rent time is less than 24h", async () => {
-    await createRentalUseCase.execute({
-      car_id: "123456",
-      user_id: "abcabc",
-      expected_return_date: new Date(
-        new Date().getTime() + new Date("12:00:00").getTime(),
-      ),
-    });
+    expect(async () => {
+      await createRentalUseCase.execute({
+        car_id: "123456",
+        user_id: "abcabc",
+        expected_return_date: addHours(new Date(), 12),
+      });
+    }).rejects.toBeInstanceOf(AppError);
   });
 });

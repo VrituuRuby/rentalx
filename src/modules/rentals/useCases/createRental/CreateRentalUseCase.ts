@@ -1,3 +1,6 @@
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
 import { Rental } from "@modules/rentals/infra/typeorm/entities/Rental";
 import { IRentalsRepository } from "@modules/rentals/repositories/IRentalsRepository";
 import { AppError } from "@shared/errors/AppError";
@@ -8,6 +11,8 @@ interface IRequest {
   expected_return_date: Date;
 }
 
+dayjs.extend(utc);
+
 class CreateRentalUseCase {
   constructor(private rentalsRepository: IRentalsRepository) {}
 
@@ -16,6 +21,7 @@ class CreateRentalUseCase {
     car_id,
     user_id,
   }: IRequest): Promise<Rental> {
+    const miniumRentalHour = 24;
     // Must not be able to register a new rental if there already is a rental of the requested car
     const carIsRented = await this.rentalsRepository.findOpenRentalByCar(
       car_id,
@@ -29,16 +35,18 @@ class CreateRentalUseCase {
       throw new AppError("User already have a rent in progress");
 
     // The minium rental time must be 24h
-    const dateNow = new Date();
-    const msBetweenDates = Math.abs(
-      dateNow.getTime() - expected_return_date.getTime(),
-    );
+    const returnDateFormatted = dayjs(expected_return_date)
+      .utc()
+      .local()
+      .format();
+    const dateNowFormatted = dayjs().utc().local().format();
 
-    const hoursBetweenDates = msBetweenDates / 1000 / 60 / 60;
+    const diffInHours = dayjs(returnDateFormatted).diff(dateNowFormatted, "h");
 
-    if (hoursBetweenDates < 24)
-      throw new AppError("Minium rental time is 24h only");
-
+    if (diffInHours < miniumRentalHour)
+      throw new AppError(
+        `"Rental return date must be at least ${miniumRentalHour}h"`,
+      );
     const rental = await this.rentalsRepository.create({
       car_id,
       user_id,

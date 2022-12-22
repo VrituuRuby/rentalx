@@ -8,7 +8,7 @@ import { AppDataSource } from "@shared/infra/typeorm";
 
 import { CarImage } from "../entities/CarImage";
 
-class CreateCarImagesRepository implements ICarImagesRepository {
+class CarImagesRepository implements ICarImagesRepository {
   private repository: Repository<CarImage>;
   constructor() {
     this.repository = AppDataSource.getRepository(CarImage);
@@ -21,4 +21,4 @@ class CreateCarImagesRepository implements ICarImagesRepository {
   }
 }
 
-export { CreateCarImagesRepository };
+export { CarImagesRepository };

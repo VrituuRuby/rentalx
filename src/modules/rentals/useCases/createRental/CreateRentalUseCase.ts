@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import { inject, injectable } from "tsyringe";
 
 import { Rental } from "@modules/rentals/infra/typeorm/entities/Rental";
 import { IRentalsRepository } from "@modules/rentals/repositories/IRentalsRepository";
@@ -13,8 +14,11 @@ interface IRequest {
 
 dayjs.extend(utc);
 
+@injectable()
 class CreateRentalUseCase {
-  constructor(private rentalsRepository: IRentalsRepository) {}
+  constructor(
+    @inject("RentalsRepository") private rentalsRepository: IRentalsRepository,
+  ) {}
 
   async execute({
     expected_return_date,
@@ -22,19 +26,16 @@ class CreateRentalUseCase {
     user_id,
   }: IRequest): Promise<Rental> {
     const miniumRentalHour = 24;
-    // Must not be able to register a new rental if there already is a rental of the requested car
     const carIsRented = await this.rentalsRepository.findOpenRentalByCar(
       car_id,
     );
     if (carIsRented) throw new AppError("Car is already rented");
 
-    // Must not be able to register a new rental if user already has a rented car
     const userHasOngoingRental =
       await this.rentalsRepository.findOpenRentalByUser(user_id);
     if (userHasOngoingRental)
       throw new AppError("User already have a rent in progress");
 
-    // The minium rental time must be 24h
     const returnDateFormatted = dayjs(expected_return_date)
       .utc()
       .local()

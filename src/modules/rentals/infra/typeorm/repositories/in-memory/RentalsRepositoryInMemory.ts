@@ -1,4 +1,7 @@
-import { IRentalsRepository } from "@modules/rentals/repositories/IRentalsRepository";
+import {
+  ICreateRentalDTO,
+  IRentalsRepository,
+} from "@modules/rentals/repositories/IRentalsRepository";
 
 import { Rental } from "../../entities/Rental";
 
@@ -7,13 +10,9 @@ export class RentalsRepositoryInMemory implements IRentalsRepository {
 
   async create({
     car_id,
-    user_id,
     expected_return_date,
-  }: {
-    car_id: string;
-    user_id: string;
-    expected_return_date: string;
-  }): Promise<Rental> {
+    user_id,
+  }: ICreateRentalDTO): Promise<Rental> {
     const rental = new Rental();
 
     Object.assign(rental, {

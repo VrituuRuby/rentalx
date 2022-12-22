@@ -11,7 +11,7 @@ import { v4 } from "uuid";
 
 import { Car } from "@modules/cars/infra/typeorm/entities/Car";
 
-@Entity()
+@Entity("rentals")
 class Rental {
   @PrimaryColumn()
   id?: string;
@@ -23,6 +23,7 @@ class Rental {
   @JoinColumn({ name: "car_id" })
   car: Car;
 
+  @Column()
   user_id: string;
 
   @Column()

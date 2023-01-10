@@ -11,6 +11,11 @@ import { Rental } from "../entities/Rental";
 class RentalsRepository implements IRentalsRepository {
   private repository: Repository<Rental> = AppDataSource.getRepository(Rental);
 
+  async findRentalById(rental_id: string): Promise<Rental> {
+    const rental = await this.repository.findOne({ where: { id: rental_id } });
+    return rental;
+  }
+
   async create({
     car_id,
     expected_return_date,

@@ -4,6 +4,11 @@ import { Car } from "@modules/cars/infra/typeorm/entities/Car";
 import { ICarsRepository } from "../ICarsRepository";
 
 class CarsRepositoryInMemory implements ICarsRepository {
+  async updateAvailable(car_id: string, available: boolean): Promise<void> {
+    const index = this.cars.findIndex(car => car_id === car.id);
+    this.cars[index].available = available;
+  }
+
   private cars: Car[] = [];
 
   async findByLicensePlate(license_plate: string): Promise<Car> {

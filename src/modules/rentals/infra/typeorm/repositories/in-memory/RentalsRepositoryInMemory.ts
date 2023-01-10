@@ -8,10 +8,16 @@ import { Rental } from "../../entities/Rental";
 export class RentalsRepositoryInMemory implements IRentalsRepository {
   rentals: Rental[] = [];
 
+  async findRentalById(rental_id: string): Promise<Rental> {
+    const rental = this.rentals.find(rental => rental.id === rental_id);
+    return rental;
+  }
+
   async create({
     car_id,
     expected_return_date,
     user_id,
+    start_date,
   }: ICreateRentalDTO): Promise<Rental> {
     const rental = new Rental();
 
@@ -19,7 +25,7 @@ export class RentalsRepositoryInMemory implements IRentalsRepository {
       car_id,
       user_id,
       expected_return_date,
-      start_date: new Date(),
+      start_date: start_date || new Date(),
     });
 
     this.rentals.push(rental);

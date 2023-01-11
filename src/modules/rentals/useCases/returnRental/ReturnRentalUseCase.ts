@@ -33,15 +33,15 @@ export class ReturnRentalUseCase {
   ) {}
 
   async execute({ id, user_id }: IRequest) {
-    const rental = await this.rentalRepository.findRentalById(id);
+    const rental = await this.rentalRepository.findOpenRentalByUser(user_id);
     if (!rental) throw new AppError("Rental not found", 404);
+    console.log(rental);
 
     let total = 0;
     const car = await this.carsRepository.findById(rental.car_id);
 
     const nowDate = this.dateProvider.dateNow();
     let daily = this.dateProvider.compareInDays(rental.start_date, nowDate);
-    console.log(`daily: ${daily}`);
 
     if (daily <= 0) daily = 1;
 
@@ -50,7 +50,6 @@ export class ReturnRentalUseCase {
       nowDate,
     );
     if (delayInDays > 0) total += delayInDays * car.fine_amount;
-    console.log(delayInDays);
 
     total += daily * car.daily_rate;
 

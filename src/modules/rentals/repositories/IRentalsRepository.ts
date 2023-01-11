@@ -5,6 +5,9 @@ export interface ICreateRentalDTO {
   car_id: string;
   user_id: string;
   expected_return_date: Date;
+  total?: number;
+  id?: string;
+  end_date?: Date;
 }
 
 interface IRentalsRepository {
@@ -12,6 +15,9 @@ interface IRentalsRepository {
     car_id,
     expected_return_date,
     user_id,
+    total,
+    id,
+    end_date,
   }: ICreateRentalDTO): Promise<Rental>;
   findOpenRentalByCar(car_id: string): Promise<Rental>;
   findOpenRentalByUser(user_id: string): Promise<Rental>;

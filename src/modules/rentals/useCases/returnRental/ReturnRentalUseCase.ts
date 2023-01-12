@@ -35,7 +35,6 @@ export class ReturnRentalUseCase {
   async execute({ id, user_id }: IRequest) {
     const rental = await this.rentalRepository.findOpenRentalByUser(user_id);
     if (!rental) throw new AppError("Rental not found", 404);
-    console.log(rental);
 
     let total = 0;
     const car = await this.carsRepository.findById(rental.car_id);

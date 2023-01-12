@@ -4,11 +4,6 @@ import { Car } from "@modules/cars/infra/typeorm/entities/Car";
 import { ICarsRepository } from "../ICarsRepository";
 
 class CarsRepositoryInMemory implements ICarsRepository {
-  async updateAvailable(car_id: string, available: boolean): Promise<void> {
-    const index = this.cars.findIndex(car => car_id === car.id);
-    this.cars[index].available = available;
-  }
-
   private cars: Car[] = [];
 
   async findByLicensePlate(license_plate: string): Promise<Car> {
@@ -68,6 +63,11 @@ class CarsRepositoryInMemory implements ICarsRepository {
   async findById(car_id: string): Promise<Car> {
     const car = await this.cars.find(car => car_id === car.id);
     return car;
+  }
+
+  async updateAvailable(car_id: string, available: boolean): Promise<void> {
+    const index = this.cars.findIndex(car => car_id === car.id);
+    this.cars[index].available = available;
   }
 }
 

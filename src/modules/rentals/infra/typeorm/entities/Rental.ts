@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToMany,
+  ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -19,7 +20,7 @@ class Rental {
   @Column()
   car_id: string;
 
-  @ManyToMany(() => Car)
+  @ManyToOne(() => Car)
   @JoinColumn({ name: "car_id" })
   car: Car;
 

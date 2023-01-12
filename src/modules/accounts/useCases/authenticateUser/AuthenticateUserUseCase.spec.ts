@@ -33,12 +33,12 @@ describe("Authenticate user", () => {
   });
 
   it("Must not be possible to authenticate an inexistent user", async () => {
-    expect(async () => {
-      await authenticateUser.execute({
+    await expect(
+      authenticateUser.execute({
         email: "anotheremail@test.com",
         password: "password",
-      });
-    }).rejects.toBeInstanceOf(AppError);
+      }),
+    ).rejects.toEqual(new AppError("Incorrect email or password!"));
   });
 
   it("Must not be possible to authenticate with incorrect password", async () => {
@@ -51,11 +51,11 @@ describe("Authenticate user", () => {
 
     await createUser.execute(user);
 
-    expect(async () => {
-      await authenticateUser.execute({
+    await expect(
+      authenticateUser.execute({
         email: user.email,
         password: "false-password",
-      });
-    }).rejects.toBeInstanceOf(AppError);
+      }),
+    ).rejects.toEqual(new AppError("Incorrect email or password!"));
   });
 });

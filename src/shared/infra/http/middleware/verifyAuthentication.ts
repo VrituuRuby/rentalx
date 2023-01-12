@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 
+import auth from "@config/auth";
 import { UsersRepository } from "@modules/accounts/infra/typeorm/repositories/UsersRepository";
 import { AppError } from "@shared/errors/AppError";
 
@@ -21,7 +22,7 @@ async function verifyAuthentication(
   try {
     const { sub: user_id } = (await verify(
       token,
-      "783c6491e6bd0d0119ded0b8706b915d",
+      auth.jwt_secret_key,
     )) as IPayload;
 
     const usersRepository = new UsersRepository();

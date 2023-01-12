@@ -51,7 +51,7 @@ class CreateRentalUseCase {
 
     if (diffInHours < miniumRentalHour)
       throw new AppError(
-        `"Rental return date must be at least ${miniumRentalHour}h"`,
+        `Rental return date must be at least ${miniumRentalHour}h`,
       );
     const rental = await this.rentalsRepository.create({
       car_id,

@@ -10,7 +10,7 @@ export class SendForgottenPasswordController {
       SendForgottenPasswordUseCase,
     );
 
-    sendForgottenPasswordUseCase.execute(email);
+    await sendForgottenPasswordUseCase.execute(email);
 
     return res.send();
   }

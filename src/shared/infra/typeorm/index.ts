@@ -11,7 +11,9 @@ export const AppDataSource = new DataSource({
   migrations: ["./src/shared/infra/typeorm/migrations/*.ts"],
 });
 
-export function createConnection(host = "database"): Promise<DataSource> {
+export function createConnection(
+  host = "rentalx-database",
+): Promise<DataSource> {
   return AppDataSource.setOptions({
     host: process.env.NODE_ENV === "test" ? "localhost" : host,
     database: process.env.NODE_ENV === "test" ? "rentalx_test" : "rentalx",

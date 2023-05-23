@@ -13,13 +13,15 @@ class CarsRepository implements ICarsRepository {
     this.repository = AppDataSource.getRepository(Car);
   }
 
-  async updateAvailable(car_id: string, available: boolean): Promise<void> {
+  async updateAvailable(car_id: string, available: boolean): Promise<Car> {
     await this.repository
       .createQueryBuilder()
       .update()
       .set({ available })
       .where("id = :id", { id: car_id })
       .execute();
+    const car = await this.repository.findOne({ where: { id: car_id } });
+    return car;
   }
 
   async findById(car_id: string): Promise<Car> {

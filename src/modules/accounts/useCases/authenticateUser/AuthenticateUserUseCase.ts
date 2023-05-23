@@ -18,7 +18,7 @@ interface IResponse {
     email: string;
     name: string;
   };
-  token: string;
+  access_token: string;
   refresh_token: string;
 }
 @injectable()
@@ -37,24 +37,25 @@ class AuthenticateUserUseCase {
     const user = await this.usersRepository.findUserByEmail(email);
     if (!user) throw new AppError("Incorrect email or password!");
 
-    // Checks if password is right
+    // Checks password match
     const passwordMatch = await compare(password, user.password);
     if (!passwordMatch) throw new AppError("Incorrect email or password!");
 
-    // Generate JWT token
     const {
-      jwt_expires_in_time,
-      jwt_secret_key,
-      refresh_token_key,
+      access_token_expires_in,
+      access_token_secret,
+      refresh_token_secret,
       refresh_token_expires_in,
       expire_days,
     } = auth;
-    const token = await sign({}, jwt_secret_key, {
+
+    // Generate JWT token
+    const access_token = sign({}, access_token_secret, {
       subject: user.id,
-      expiresIn: jwt_expires_in_time,
+      expiresIn: access_token_expires_in,
     });
 
-    const refresh_token = sign({ email }, refresh_token_key, {
+    const refresh_token = sign({ email }, refresh_token_secret, {
       subject: user.id,
       expiresIn: refresh_token_expires_in,
     });
@@ -66,12 +67,12 @@ class AuthenticateUserUseCase {
     });
 
     const tokenReturn: IResponse = {
-      token,
+      access_token,
+      refresh_token,
       user: {
         name: user.name,
         email: user.email,
       },
-      refresh_token,
     };
 
     return tokenReturn;

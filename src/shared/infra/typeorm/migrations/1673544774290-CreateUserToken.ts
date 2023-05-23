@@ -12,6 +12,16 @@ export class CreateUserToken1673544774290 implements MigrationInterface {
           { name: "expire_date", type: "timestamp" },
           { name: "created_at", type: "timestamp", default: "now()" },
         ],
+        foreignKeys: [
+          {
+            name: "FK_user_token",
+            referencedTableName: "users",
+            referencedColumnNames: ["id"],
+            columnNames: ["user_id"],
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE",
+          },
+        ],
       }),
     );
   }

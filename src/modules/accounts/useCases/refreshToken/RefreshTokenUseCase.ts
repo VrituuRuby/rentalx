@@ -16,7 +16,7 @@ export class RefreshTokenUseCase {
     private userTokensRepository: IUserTokensRepository,
   ) {}
   async execute(token: string) {
-    const { email, sub } = verify(token, auth.refresh_token_key) as IPayload;
+    const { email, sub } = verify(token, auth.refresh_token_secret) as IPayload;
 
     const user_id = sub;
 

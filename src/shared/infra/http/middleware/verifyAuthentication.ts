@@ -22,7 +22,7 @@ async function verifyAuthentication(
   try {
     const { sub: user_id } = (await verify(
       token,
-      auth.jwt_secret_key,
+      auth.access_token_secret,
     )) as IPayload;
 
     const usersRepository = new UsersRepository();

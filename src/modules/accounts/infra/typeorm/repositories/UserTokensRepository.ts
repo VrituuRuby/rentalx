@@ -12,6 +12,9 @@ export class UserTokensRepository implements IUserTokensRepository {
   constructor() {
     this.repository = AppDataSource.getRepository(UserToken);
   }
+  DeleteQueryBuilder(id: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 
   async create({
     expire_date,
@@ -32,5 +35,9 @@ export class UserTokensRepository implements IUserTokensRepository {
     refresh_token: string,
   ): Promise<UserToken> {
     return this.repository.findOne({ where: { user_id, refresh_token } });
+  }
+
+  async deleteById(id: string) {
+    await this.repository.delete(id);
   }
 }

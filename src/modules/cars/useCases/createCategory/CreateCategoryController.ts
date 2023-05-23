@@ -9,7 +9,7 @@ export class CreateCategoryController {
 
     const createCategoryUseCase = container.resolve(CreateCategoryUseCase);
 
-    await createCategoryUseCase.execute({ name, description });
-    return res.status(201).send();
+    const category = await createCategoryUseCase.execute({ name, description });
+    return res.status(201).send(category);
   }
 }

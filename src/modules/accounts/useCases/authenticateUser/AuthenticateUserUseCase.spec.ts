@@ -1,18 +1,30 @@
 import { ICreateUserDTO } from "@modules/accounts/dtos/ICreateUserDTO";
 import { UsersRepositoryInMemory } from "@modules/accounts/repositories/in-memory/UsersRepositoryInMemory";
+import { UserTokensRepositoryInMemory } from "@modules/accounts/repositories/in-memory/UserTokensRepositpryInMemory";
+import { IUserTokensRepository } from "@modules/accounts/repositories/IUserTokensRepository";
 import { CreateUserUseCase } from "@modules/accounts/useCases/createUser/CreateUserUseCase";
+import { DayjsDateProvider } from "@shared/container/providers/DateProvider/DayjsDateProvider";
+import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { AppError } from "@shared/errors/AppError";
 
 import { AuthenticateUserUseCase } from "./AuthenticateUserUseCase";
 
 let usersRepository: UsersRepositoryInMemory;
+let userTokensRepository: IUserTokensRepository;
+let dateProvider: IDateProvider;
 let authenticateUser: AuthenticateUserUseCase;
 let createUser: CreateUserUseCase;
 
 describe("Authenticate user", () => {
   beforeEach(() => {
     usersRepository = new UsersRepositoryInMemory();
-    authenticateUser = new AuthenticateUserUseCase(usersRepository);
+    dateProvider = new DayjsDateProvider();
+    userTokensRepository = new UserTokensRepositoryInMemory();
+    authenticateUser = new AuthenticateUserUseCase(
+      usersRepository,
+      userTokensRepository,
+      dateProvider,
+    );
     createUser = new CreateUserUseCase(usersRepository);
   });
   it("Must be possible to authenticate an user", async () => {
@@ -29,7 +41,8 @@ describe("Authenticate user", () => {
       email: user.email,
       password: user.password,
     });
-    expect(result).toHaveProperty("token");
+    expect(result).toHaveProperty("access_token");
+    expect(result).toHaveProperty("refresh_token");
   });
 
   it("Must not be possible to authenticate an inexistent user", async () => {

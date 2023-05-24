@@ -6,6 +6,9 @@ import { IDateProvider } from "./IDateProvider";
 dayjs.extend(utc);
 
 export class DayjsDateProvider implements IDateProvider {
+  isBefore(start_date: Date, end_date: Date): boolean {
+    return dayjs(start_date).isBefore(end_date);
+  }
   dateNow(): Date {
     return dayjs().toDate();
   }

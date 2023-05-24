@@ -4,7 +4,6 @@ services:
   rentalx-db:
     image: postgres
     container_name: rentalx-database
-    restart: always
     ports:
       - 5432:5432
     environment:

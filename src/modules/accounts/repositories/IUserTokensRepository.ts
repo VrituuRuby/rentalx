@@ -8,4 +8,5 @@ export interface IUserTokensRepository {
     user_id: string,
     refresh_token: string,
   ): Promise<UserToken>;
+  findByRefreshToken(token: string): Promise<UserToken>;
 }

@@ -18,22 +18,13 @@ async function verifyAuthentication(
   const authHeaders = req.headers.authorization;
   if (!authHeaders) throw new AppError("Missing token!", 401);
 
-  const userTokensRepository = new UserTokensRepository();
-
   const [, token] = authHeaders.split(" ");
 
   try {
     const { sub: user_id } = verify(
       token,
-      auth.refresh_token_secret,
+      auth.access_token_secret,
     ) as IPayload;
-
-    const user = await userTokensRepository.findByUserIDAndToken(
-      user_id,
-      token,
-    );
-
-    if (!user) throw new AppError("User doesn't exists!", 404);
 
     req.user = {
       id: user_id,

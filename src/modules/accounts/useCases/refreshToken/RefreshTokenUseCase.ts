@@ -3,14 +3,18 @@ import { inject, injectable } from "tsyringe";
 
 import auth from "@config/auth";
 import { IUserTokensRepository } from "@modules/accounts/repositories/IUserTokensRepository";
-import { AppError } from "@shared/errors/AppError";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
+import { AppError } from "@shared/errors/AppError";
 
 interface IPayload {
   email: string;
   sub: string;
 }
 
+interface ITokenResponse {
+  access_token: string;
+  refresh_token: string;
+}
 @injectable()
 export class RefreshTokenUseCase {
   constructor(
@@ -19,7 +23,7 @@ export class RefreshTokenUseCase {
     @inject("DateProvider")
     private dateProvider: IDateProvider,
   ) {}
-  async execute(token: string): Promise<string> {
+  async execute(token: string): Promise<ITokenResponse> {
     const { email, sub: user_id } = verify(
       token,
       auth.refresh_token_secret,
@@ -34,6 +38,11 @@ export class RefreshTokenUseCase {
 
     await this.userTokensRepository.deleteById(userToken.id);
 
+    const access_token = sign({}, auth.access_token_secret, {
+      subject: user_id,
+      expiresIn: auth.access_token_expires_in,
+    });
+
     const refresh_token = sign({ email }, auth.refresh_token_secret, {
       subject: user_id,
       expiresIn: auth.refresh_token_expires_in,
@@ -45,6 +54,6 @@ export class RefreshTokenUseCase {
       refresh_token,
     });
 
-    return refresh_token;
+    return { access_token, refresh_token };
   }
 }

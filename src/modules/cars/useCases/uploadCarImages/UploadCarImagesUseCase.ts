@@ -16,6 +16,8 @@ class UploadCarImagesUseCase {
     private carImagesRepository: ICarImagesRepository,
     @inject("CarsRepository")
     private carsRepository: ICarsRepository,
+    @inject("StorageProvider")
+    private storageProvider: IStorageProvider,
   ) {}
   async execute({ car_id, images_name }: IRequest): Promise<void> {
     const carExists = await this.carsRepository.findById(car_id);
@@ -23,6 +25,7 @@ class UploadCarImagesUseCase {
 
     images_name.map(async image => {
       await this.carImagesRepository.create({ car_id, image_name: image });
+      await this.storageProvider.save(image, "cars");
     });
   }
 }

@@ -47,6 +47,7 @@ class CreateCarUseCase {
       license_plate,
       name,
     });
+
     return car;
   }
 }
